@@ -6,14 +6,17 @@ const { getPostData } = require('../utils')
 // @route   GET /api/products
 async function getProducts(req, res) {
     try {
+
         const products = await Product.findAll()
 
         res.writeHead(200, { 'Content-Type': 'application/json' })
         res.end(JSON.stringify(products))
         
     } catch (error) {
+
         res.writeHead(500, { 'Content-Type': 'application/json' })
         res.end(JSON.stringify({ message: error.message }))
+
     }
 }
 
@@ -41,6 +44,7 @@ async function getProduct(req, res, id) {
 // @route   POST /api/products
 async function createProduct(req, res) {
     try {
+
         const body = await getPostData(req)
 
         const { name, description, price } = JSON.parse(body)
@@ -57,8 +61,10 @@ async function createProduct(req, res) {
         return res.end(JSON.stringify(newProduct))  
 
     } catch (error) {
+
         res.writeHead(500, { 'Content-Type': 'application/json' })
         res.end(JSON.stringify({ message: error.message }))
+
     }
 }
 
@@ -97,8 +103,9 @@ async function updateProduct(req, res, id) {
 // @desc    Delete Product
 // @route   DELETE /api/product/:id
 async function deleteProduct(req, res, id) {
+    const product = await Product.findById(id)
+    
     try {
-        const product = await Product.findById(id)
 
         if(!product) {
             res.writeHead(404, { 'Content-Type': 'application/json' })
@@ -110,8 +117,10 @@ async function deleteProduct(req, res, id) {
         }
 
     } catch (error) {
+
         res.writeHead(500, { 'Content-Type': 'application/json' })
         res.end(JSON.stringify({ message: error.message }))
+        
     }
 }
 

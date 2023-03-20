@@ -1,9 +1,8 @@
-const axios = require('axios')
+import axios from 'axios'
 
 const consumeGeekJokesApi = async () => {
     const response = (await axios.get('https://geek-jokes.sameerkumar.website/api?format=json')).data;
-    const { joke } = response;
-    return joke;
+    return response.joke
 }
 
 const translateTextFromEnglishToSpanish = async (text) => {
@@ -16,12 +15,8 @@ const translateTextFromEnglishToSpanish = async (text) => {
     return translatedText;
 }
 
-const apiController = async () => {
+export const apiController = async () => {
     const joke = await consumeGeekJokesApi();
-    const translatedText = await translateTextFromEnglishToSpanish(String.toString(joke));
-    return translatedText;
-}
-
-module.exports = {
-    apiController
+    // const translatedText = await translateTextFromEnglishToSpanish(String.toString(joke));
+    return joke;
 }
