@@ -1,0 +1,37 @@
+FROM php:8.2-fpm
+
+RUN apt-get update -y && apt-get install -y libpng-dev libicu-dev libzip-dev libc-client-dev libkrb5-dev git python
+RUN docker-php-ext-install bcmath gd intl mysqli zip pdo pdo_mysql
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && docker-php-ext-install imap
+#RUN pecl install redis && docker-php-ext-enable redis
+
+# Install composer
+RUN curl -O "https://getcomposer.org/download/2.5.5/composer.phar"
+RUN chmod a+x composer.phar
+RUN mv composer.phar /usr/local/bin/composer
+
+# Use node v14 LTS
+RUN curl -fsSL https://deb.nodesource.com/setup_19.x | bash -
+RUN apt install nodejs
+RUN npm install -g n
+RUN n install 19.0.0
+
+WORKDIR /var/www
+
+ENTRYPOINT [ "init.sh" ]
+
+# WORKDIR /var/www/html/current/
+CMD ["/bin/bash", "-c", "cp -n .env.example .env; \
+mkdir -p ./.git/hooks; \
+cp -n ./scripts/files/hook-pre-commit.sh ./.git/hooks/hook-pre-commit.sh; \
+mv -n ./.git/hooks/hook-pre-commit.sh ./.git/hooks/pre-commit; \
+chmod 775 .git/hooks/pre-commit; \
+chown -R :www-data /var/www/html/current; \
+chmod -R 775 /var/www/html/current/storage; \
+chmod -R 775 /var/www/html/current/bootstrap/cache; \
+composer install; \
+php /var/www/html/current/artisan migrate || true && \
+php /var/www/html/current/artisan migrate:sharding && \
+php /var/www/html/current/artisan migrate; \
+npm install; \
+npm run dev;"]
