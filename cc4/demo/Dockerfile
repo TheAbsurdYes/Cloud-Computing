@@ -56,6 +56,10 @@ RUN chown -R www-data: .
 
 # RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=localhost"
 
+RUN touch ./database/database.sqlite && \
+    chown www-data:www-data ./database/database.sqlite && \
+    chmod 664 ./database/database.sqlite
+
 RUN php artisan migrate:fresh --force
 
 EXPOSE 8080
