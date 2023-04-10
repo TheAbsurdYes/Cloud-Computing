@@ -45,6 +45,8 @@ RUN composer install --no-dev --no-scripts --no-progress --prefer-dist --optimiz
 
 COPY . .
 
+RUN cp .env.example .env
+
 RUN npm install
 RUN npm run build
 
